@@ -5,8 +5,10 @@ import fs from "node:fs";
 const base = process.env.BASE || "http://localhost:4173";
 const out = process.env.OUT || "shots";
 fs.mkdirSync(out, { recursive: true });
-const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
-const page = await browser.newPage({ viewport: { width: 360, height: 800 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+// PROXY=1 for testing the live site from a sandbox that goes through an HTTPS proxy.
+const viaProxy = process.env.PROXY && process.env.HTTPS_PROXY;
+const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium", ...(viaProxy ? { proxy: { server: process.env.HTTPS_PROXY } } : {}) });
+const page = await browser.newPage({ viewport: { width: 360, height: 800 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, ignoreHTTPSErrors: !!viaProxy });
 const errors = [];
 const fail = (m) => { errors.push(m); };
 page.on("pageerror", (e) => fail("pageerror: " + e.message));
@@ -16,8 +18,12 @@ const shot = (n) => page.screenshot({ path: `${out}/${n}.png` });
 const pickInSheet = async (t) => { await page.getByText(t, { exact: true }).locator("visible=true").last().click(); await page.waitForTimeout(450); };
 const tap = async (t, opts = {}) => { await page.getByText(t, { exact: true, ...opts }).locator("visible=true").last().click(); await page.waitForTimeout(450); };
 
-await page.goto(base, { waitUntil: "networkidle" });
-await page.getByText("New Bill", { exact: true }).first().waitFor({ timeout: 20000 });
+// Up to 3 tries: a sandbox proxy sometimes drops the first download of the bundle.
+for (let i = 0; ; i++) {
+  await page.goto(base, { waitUntil: "networkidle" });
+  try { await page.getByText("New Bill", { exact: true }).first().waitFor({ timeout: 20000 }); break; }
+  catch (e) { if (i === 2) throw e; }
+}
 
 // 1. Bill for Mehran Mart (balance 0): 2 cartons powder + 12 bottles tel, 100 discount, 3000 received.
 await page.getByRole("tab", { name: /New Bill/ }).click();
