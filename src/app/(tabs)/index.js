@@ -3,10 +3,11 @@ import { router } from "expo-router";
 import { AlertTriangle, ChevronRight, Plus } from "../../components/icons";
 import { Header } from "../../components/Header";
 import { Btn, Card, Loading, Row, T } from "../../components/ui";
+import { BillRow } from "../../components/BillRow";
 import { useQuery } from "../../db/DbProvider";
 import { dashboard, getShop, lowStock, recentBills } from "../../db/queries";
 import { C } from "../../theme";
-import { billNo, dayLabel, money, qtyText, timeText } from "../../lib/format";
+import { money, qtyText } from "../../lib/format";
 
 export default function Home() {
   const shop = useQuery(getShop);
@@ -22,7 +23,7 @@ export default function Home() {
           <Btn title="New Bill" icon={Plus} kind="accent" size="lg" onPress={() => router.navigate("/bill")} />
 
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
-            <Stat label="Today's sale" value={money(d.sale.total)} sub={`${d.sale.n} bill${d.sale.n === 1 ? "" : "s"}`} />
+            <Stat label="Today's sale" value={money(d.sale.total)} sub={`${d.sale.n} bill${d.sale.n === 1 ? "" : "s"}, see all`} onPress={() => router.push({ pathname: "/bills", params: { range: "today" } })} />
             <Stat label="Cash in hand" value={money(d.inHand)} sub={`In ${money(d.cashToday.cin)} | Out ${money(d.cashToday.cout)}`} onPress={() => router.navigate("/cash")} />
             <Stat label="Udhaar (to receive)" value={money(d.udhaar.total)} sub={`${d.udhaar.n} customers`} onPress={() => router.navigate("/khata")} />
             <Stat label="Recovery today" value={money(d.cashToday.recovery)} sub={`Suppliers owed ${money(d.payable.total)}`} />
@@ -45,24 +46,10 @@ export default function Home() {
 
           <Row style={{ justifyContent: "space-between", marginTop: 4 }}>
             <T w="b" size={17}>Recent bills</T>
+            <Btn kind="ghost" title="See all bills" icon={ChevronRight} onPress={() => router.push("/bills")} style={{ minHeight: 44, paddingHorizontal: 12, flexDirection: "row-reverse" }} />
           </Row>
-          <Card style={{ padding: 0 }}>
-            {bills?.map((b, i) => (
-              <Card key={b.id} onPress={() => router.push(`/memo/${b.id}`)}
-                style={{ borderWidth: 0, borderRadius: 0, borderTopWidth: i ? 1 : 0, borderColor: C.line, flexDirection: "row", alignItems: "center", gap: 10, minHeight: 64 }}>
-                <View style={{ flex: 1 }}>
-                  <T w="sb" size={16} numberOfLines={1}>{b.name_en}</T>
-                  <T size={13} color={C.muted}>#{billNo(b.id)} | {dayLabel(b.created_at)} {timeText(b.created_at)}</T>
-                </View>
-                <View style={{ alignItems: "flex-end" }}>
-                  <T w="b" size={16}>{money(b.total)}</T>
-                  <T size={13} color={b.received >= b.total ? C.green : C.red}>
-                    {b.received >= b.total ? "Paid" : b.received ? `Paid ${money(b.received)}` : "Udhaar"}
-                  </T>
-                </View>
-                <ChevronRight size={20} color={C.muted} />
-              </Card>
-            ))}
+          <Card style={{ padding: 0, overflow: "hidden" }}>
+            {bills?.map((b, i) => <BillRow key={b.id} bill={b} first={i === 0} />)}
           </Card>
         </ScrollView>
       )}

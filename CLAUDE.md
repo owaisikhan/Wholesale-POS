@@ -32,7 +32,7 @@ Read `AGENTS.md` and the versioned Expo docs before touching Expo APIs.
 
 ## Layout
 
-- `src/app/(tabs)/` Home, New Bill, Khata, Stock, Cash. `src/app/memo/[id].js` memo + share/print. `src/app/party/[id].js` khata statement.
+- `src/app/(tabs)/` Home, New Bill, Khata, Stock, Cash. `src/app/memo/[id].js` memo + share/print. `src/app/party/[id].js` khata statement. `src/app/bills.js` all bills (Today / 7 days / All, search, day groups, 30 per page), opened from Home.
 - `src/db/` schema (rules), actions (writes, each in one transaction), queries (reads), seed (demo shop), DbProvider (`useQuery` re-runs after any write).
 - `src/components/Memo.js` the 58mm memo (384px). `src/components/icons.js` the only place icons are imported from.
 - `src/lib/share.web.js` memo to PNG (html-to-image) and Web Share; `share.js` is the Android stub (view-shot + Bluetooth print come in the paid build).
@@ -41,7 +41,7 @@ Read `AGENTS.md` and the versioned Expo docs before touching Expo APIs.
 ## Commands
 
 - `npm run web` dev server. `npm run build:web` export to `dist/`. `npm run serve` serve `dist/` with the COOP/COEP headers.
-- `npm run check` (needs `npm run serve` running): screenshots every tab at 360x800 and walks bill, memo, refusal, payment, stock in, cash out. Playwright is not a dependency; symlink the global one: `ln -sfn /opt/node-tools/node_modules/playwright node_modules/playwright`.
+- `npm run check` (needs `npm run serve` running): screenshots every tab at 360x800 and walks bill, memo, refusal, payment, stock in, cash out, all bills. Playwright is not a dependency; symlink the global one: `ln -sfn /opt/node-tools/node_modules/playwright node_modules/playwright`.
 
 ## Gotchas
 
@@ -49,4 +49,5 @@ Read `AGENTS.md` and the versioned Expo docs before touching Expo APIs.
 - Import icons only through `src/components/icons.js`; the package root adds about 2 MB. `EXPO_UNSTABLE_TREE_SHAKING` breaks the SQLite worker, do not use it.
 - From a stack screen, go to a tab with `router.dismissTo(...)`; `navigate`/`replace` stacks a second tabs navigator.
 - A ScrollView inside the bottom sheet needs `flexShrink: 1` or long lists cannot scroll.
+- Demo seed puts today's bills between 9 AM and now, none before 10 AM, so a late-night visitor does not see bills at 12:05 AM.
 - Vercel must send `Cross-Origin-Embedder-Policy: credentialless` and `Cross-Origin-Opener-Policy: same-origin` (`vercel.json`), or SQLite cannot start.

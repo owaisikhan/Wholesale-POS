@@ -21,6 +21,7 @@ for the rules.
 | L-003 | 2026-10-01 | gotcha | expo-sqlite on web loses RAISE messages; derive refusals from figures | type: mobile-app | logged |
 | L-004 | 2026-10-01 | gotcha | lucide-react-native root import adds ~2 MB on web; Expo tree shaking breaks the SQLite worker | type: mobile-app | logged |
 | L-005 | 2026-10-01 | gotcha | expo-router: stack screen to tab needs dismissTo, navigate stacks a second tabs navigator | type: mobile-app | logged |
+| L-007 | 2026-10-01 | gap | Every "recent X" list needs a "see all" screen with filters and paging | all | logged |
 | L-006 | 2026-10-01 | choice | Client demo = web build of the Expo app, in-memory DB, free Vercel link | type: mobile-app | logged |
 
 ## Entries
@@ -71,4 +72,20 @@ for the rules.
 - **Lesson:** Demo the Android app as its own web build on a free Vercel link: in-memory database seeded with the client's shop, DEMO on every memo, resets on refresh, and no WhatsApp to stored numbers. The APK and license key come after payment.
 - **Scope:** type: mobile-app
 - **Target in skill:** references/types/mobile-app.md, new "Client demo" section
+- **Status:** logged
+
+### L-007 · 2026-10-01 · medium · gap
+- **Said / saw:** "it has few recent bills where can i see all the bills entered"
+- **Context:** Home showed the last 6 bills and nothing else listed them
+- **Lesson:** A "recent" list on a dashboard is a preview, never the only way in. Ship the full list with it: date filter, search, totals for the filter, grouping by day, paging. Link it from the preview's heading and from the matching stat tile.
+- **Scope:** all
+- **Target in skill:** references/types/dashboard.md and mobile-app.md, UI conventions
+- **Status:** logged
+
+### L-008 · 2026-10-01 · low · gotcha
+- **Said / saw:** user's screenshot showed today's demo bills at 12:05 AM to 12:50 AM
+- **Context:** seed data timed relative to "now", opened just after midnight
+- **Lesson:** Seeded "today" activity must sit inside business hours and before now; when the day has not started yet, seed none.
+- **Scope:** all
+- **Target in skill:** section 5, realistic data
 - **Status:** logged

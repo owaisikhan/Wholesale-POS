@@ -7,6 +7,12 @@ export function stamp(d = new Date()) {
 
 export const today = () => stamp().slice(0, 10);
 
+export function daysAgo(n) {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return stamp(d).slice(0, 10);
+}
+
 export function rs(n) {
   const v = Math.round(Number(n) || 0);
   return v.toLocaleString("en-PK");

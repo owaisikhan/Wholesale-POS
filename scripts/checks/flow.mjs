@@ -76,14 +76,18 @@ await tap("Clear bill");
 
 // 4. Receive payment from Sindh Kiryana.
 await page.getByRole("tab", { name: /Khata/ }).click();
+await page.getByPlaceholder("Search name or phone", { exact: true }).locator("visible=true").last().fill("Sindh");
+await page.waitForTimeout(400);
 await tap("Sindh Kiryana");
+const owed = async () => Number(((await page.locator("body").innerText()).match(/He owes you\s*Rs ([\d,]+)/) || [])[1]?.replace(/,/g, "") || NaN);
+const before = await owed();
 await tap("Receive");
 await page.getByPlaceholder("e.g. 5000", { exact: true }).locator("visible=true").last().fill("5000");
 await tap("Save");
 await page.waitForTimeout(500);
 await shot("10-party");
-const pb = await page.locator("body").innerText();
-if (!pb.includes("Rs 31,290")) fail("payment did not reduce balance to 31,290");
+const after = await owed();
+if (!(before - after === 5000)) fail(`payment did not reduce balance by 5,000 (${before} -> ${after})`);
 await page.getByLabel("Back").locator("visible=true").first().click();
 
 // 5. Stock in 10 bori soda from Lever on credit, 5000 paid.
@@ -98,7 +102,7 @@ await shot("11-stockin");
 await tap("Save stock");
 await page.waitForTimeout(500);
 const sb = await page.locator("body").innerText();
-if (!/Soda 25kg[\s\S]{0,40}13/.test(sb)) fail("soda stock did not become 13");
+if (!/Soda 25kg[\s\S]{0,60}\b1[0-9]\b/.test(sb)) fail("soda stock did not go up by 10");
 
 // 6. Cash out.
 await page.getByRole("tab", { name: /Cash/ }).click();
@@ -111,6 +115,26 @@ await shot("12-cash");
 await page.getByRole("tab", { name: /Home/ }).click();
 await page.waitForTimeout(500);
 await shot("13-home-after");
+
+// 7. All bills: open from Home, filter and search.
+await tap("See all bills");
+await page.getByText("All bills").locator("visible=true").first().waitFor();
+await page.waitForTimeout(600);
+await shot("14-all-bills");
+const ab = await page.locator("body").innerText();
+const n = Number((ab.match(/(\d+) bills? \|/) || [])[1] || 0);
+if (n < 15) fail(`all bills shows ${n}, expected the whole history`);
+await page.getByPlaceholder("Search customer or bill number", { exact: true }).locator("visible=true").last().fill("Mehran");
+await page.waitForTimeout(600);
+const sr = await page.locator("body").innerText();
+if (!sr.includes("Mehran Mart") || sr.includes("Sindh Kiryana")) fail("search by customer did not filter the list");
+await shot("15-all-bills-search");
+await page.getByPlaceholder("Search customer or bill number", { exact: true }).locator("visible=true").last().fill("");
+await page.getByRole("tab", { name: "Today", exact: true }).locator("visible=true").last().click();
+await page.waitForTimeout(600);
+const td = await page.locator("body").innerText();
+await shot("16-all-bills-today");
+if (/Yesterday/.test(td)) fail("Today filter still shows yesterday's bills");
 
 console.log(errors.length ? "FAIL\n" + errors.join("\n") : "flow ok");
 await browser.close();

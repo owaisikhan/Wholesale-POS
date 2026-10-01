@@ -88,14 +88,14 @@ export async function seed(db) {
   const now = new Date();
 
   for (let day = 6; day >= 0; day--) {
-    const nBills = day === 0 ? 3 : 2 + Math.floor(rand() * 3);
+    // Today's sample bills fall in shop hours (from 9 AM) and before now. Before
+    // 10 AM there are none yet, so a late-night visitor never sees 12:05 AM bills.
+    const open = at(0, 9, 0).getTime();
+    const room = now.getTime() - 5 * 60000 - open;
+    const nBills = day === 0 ? (room > 60 * 60000 ? 3 : 0) : 2 + Math.floor(rand() * 3);
     for (let b = 0; b < nBills; b++) {
       let when = at(day, 9 + b * 2 + Math.floor(rand() * 2), Math.floor(rand() * 60));
-      if (day === 0) {
-        when = new Date(now.getTime() - (nBills - b) * 47 * 60000);
-        const midnight = at(0, 0, 5 + b);
-        if (when < midnight) when = midnight;
-      }
+      if (day === 0) when = new Date(open + (room * (b + 1)) / (nBills + 1));
 
       const nLines = 1 + Math.floor(rand() * 3);
       const used = new Set();

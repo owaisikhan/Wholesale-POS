@@ -1,4 +1,4 @@
-import { today } from "../lib/format";
+import { daysAgo, today } from "../lib/format";
 
 export const listItems = (db) => db.getAllAsync("SELECT * FROM items ORDER BY id");
 
@@ -83,4 +83,39 @@ export const stockHistory = (db, limit = 30) =>
 export async function getShop(db) {
   const rows = await db.getAllAsync("SELECT key, value FROM settings");
   return Object.fromEntries(rows.map((r) => [r.key, r.value]));
+}
+
+// All bills, newest first, filtered by range and by customer name or bill number.
+// range: 'today' | 'week' | 'all'. Paged with limit/offset; bills grow every day.
+function billFilter(range, q) {
+  const where = [];
+  const args = [];
+  if (range === "today") { where.push("substr(b.created_at, 1, 10) = ?"); args.push(today()); }
+  if (range === "week") { where.push("substr(b.created_at, 1, 10) >= ?"); args.push(daysAgo(6)); }
+  const s = (q || "").trim();
+  if (s) {
+    where.push("(p.name_en LIKE ? OR p.name_ur LIKE ? OR printf('%04d', b.id) LIKE ?)");
+    args.push(`%${s}%`, `%${s}%`, `%${s.replace(/^#/, "")}%`);
+  }
+  return { sql: where.length ? `WHERE ${where.join(" AND ")}` : "", args };
+}
+
+export function listBills(db, { range = "all", q = "", limit = 30, offset = 0 } = {}) {
+  const f = billFilter(range, q);
+  return db.getAllAsync(
+    `SELECT b.id, b.created_at, b.total, b.received, p.name_en, p.name_ur, p.walk_in,
+            (SELECT COUNT(*) FROM bill_lines bl WHERE bl.bill_id = b.id) AS n_items
+     FROM bills b JOIN parties p ON p.id = b.party_id ${f.sql}
+     ORDER BY b.created_at DESC, b.id DESC LIMIT ? OFFSET ?`,
+    ...f.args, limit, offset,
+  );
+}
+
+export function billTotals(db, { range = "all", q = "" } = {}) {
+  const f = billFilter(range, q);
+  return db.getFirstAsync(
+    `SELECT COUNT(*) AS n, COALESCE(SUM(b.total), 0) AS total, COALESCE(SUM(MIN(b.received, b.total)), 0) AS received
+     FROM bills b JOIN parties p ON p.id = b.party_id ${f.sql}`,
+    ...f.args,
+  );
 }
