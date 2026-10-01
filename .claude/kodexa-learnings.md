@@ -18,6 +18,10 @@ for the rules.
 |---|---|---|---|---|---|
 | L-001 | 2026-10-01 | gap | 58mm thermal + Urdu: print the memo as a 384px bitmap | type: mobile-app | logged |
 | L-002 | 2026-10-01 | gotcha | Headless renders silently fall back when web fonts are blocked; bundle fonts | all | logged |
+| L-003 | 2026-10-01 | gotcha | expo-sqlite on web loses RAISE messages; derive refusals from figures | type: mobile-app | logged |
+| L-004 | 2026-10-01 | gotcha | lucide-react-native root import adds ~2 MB on web; Expo tree shaking breaks the SQLite worker | type: mobile-app | logged |
+| L-005 | 2026-10-01 | gotcha | expo-router: stack screen to tab needs dismissTo, navigate stacks a second tabs navigator | type: mobile-app | logged |
+| L-006 | 2026-10-01 | choice | Client demo = web build of the Expo app, in-memory DB, free Vercel link | type: mobile-app | logged |
 
 ## Entries
 
@@ -35,4 +39,36 @@ for the rules.
 - **Lesson:** Bundle woff2 files next to the page instead of linking Google Fonts, and check the screenshot by eye. Offline apps need bundled fonts anyway.
 - **Scope:** all
 - **Target in skill:** section 5, verification
+- **Status:** logged
+
+### L-003 · 2026-10-01 · medium · gotcha
+- **Said / saw:** stock refusal came back as "Error finalizing statement" in the web build
+- **Context:** SQLite trigger `RAISE(ABORT, 'STOCK_SHORT')` in expo-sqlite 57 web (wa-sqlite worker)
+- **Lesson:** On web the RAISE text does not reach JavaScript. Keep the rule in the trigger, and when no code arrives, re-check the figures (stock, walk-in) to choose the sentence. Never show the raw error.
+- **Scope:** type: mobile-app
+- **Target in skill:** references/types/mobile-app.md, Gotchas
+- **Status:** logged
+
+### L-004 · 2026-10-01 · medium · gotcha
+- **Said / saw:** web bundle 3.5 MB; with EXPO_UNSTABLE_TREE_SHAKING 1.4 MB but "importScripts ... /worker failed to load"
+- **Context:** Expo web export with lucide-react-native and expo-sqlite
+- **Lesson:** Import each icon from `lucide-react-native/icons/<name>` through one `icons.js`. That alone gives 1.4 MB with the SQLite worker intact. Do not turn on Expo's unstable tree shaking with expo-sqlite.
+- **Scope:** type: mobile-app
+- **Target in skill:** references/types/mobile-app.md, Stack
+- **Status:** logged
+
+### L-005 · 2026-10-01 · medium · gotcha
+- **Said / saw:** after "New bill" on the memo screen, two New Bill screens existed (Playwright strict-mode error)
+- **Context:** expo-router 57, root Stack with (tabs) plus memo/[id]
+- **Lesson:** From a stack screen back into a tab use `router.dismissTo(href)`. `navigate` and `replace` push a second tabs navigator.
+- **Scope:** type: mobile-app
+- **Target in skill:** references/types/mobile-app.md, Gotchas
+- **Status:** logged
+
+### L-006 · 2026-10-01 · medium · choice
+- **Said / saw:** "sending him an APK file would be dangerous, he might not reply ... and wont send me the money"; then "Free Vercel link"
+- **Context:** showing a client the app before payment
+- **Lesson:** Demo the Android app as its own web build on a free Vercel link: in-memory database seeded with the client's shop, DEMO on every memo, resets on refresh, and no WhatsApp to stored numbers. The APK and license key come after payment.
+- **Scope:** type: mobile-app
+- **Target in skill:** references/types/mobile-app.md, new "Client demo" section
 - **Status:** logged

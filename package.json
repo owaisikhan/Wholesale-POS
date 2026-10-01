@@ -1,0 +1,33 @@
+{
+  "name": "sohana-pos",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "dependencies": {
+    "expo": "~57.0.26",
+    "expo-constants": "~57.0.20",
+    "expo-font": "~57.0.4",
+    "expo-linking": "~57.0.11",
+    "expo-router": "~57.0.24",
+    "expo-sqlite": "~57.0.3",
+    "expo-status-bar": "~57.0.1",
+    "html-to-image": "^1.11.13",
+    "lucide-react-native": "^1.49.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "react-native-svg": "15.15.4",
+    "react-native-web": "^0.21.2"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "web": "expo start --web",
+    "build:web": "expo export -p web",
+    "lint": "expo lint",
+    "serve": "node scripts/serve-dist.mjs",
+    "check": "node scripts/checks/shots.mjs && node scripts/checks/flow.mjs"
+  },
+  "private": true
+}

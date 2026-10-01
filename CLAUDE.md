@@ -21,8 +21,32 @@ design work, and log preferences, corrections and reversals to
 - WhatsApp: one-tap share of the memo image (free), not the paid Business API.
 - Demo is shown as a web page, not an APK.
 
+- Demo = the web build of the same Expo app, on a free Vercel link. In-memory SQLite, seeded with sample data, resets on refresh; memos say DEMO; WhatsApp never prefills a stored number in the demo.
+- Money and stock rules are SQLite triggers (`src/db/schema.js`): no negative stock, append-only ledger/cash/bills, bill "previous" must equal the khata balance, walk-in pays in full. `src/lib/refusals.js` turns them into sentences with figures.
+- Khata sign: balance = SUM(debit - credit). Customer positive = he owes us. Supplier negative = we owe him.
+
+## Stack
+
+Expo SDK 57 (React Native 0.86, React 19), expo-router (routes in `src/app/`), expo-sqlite (wasm on web), plain JavaScript.
+Read `AGENTS.md` and the versioned Expo docs before touching Expo APIs.
+
 ## Layout
 
-- `design/memo/memo.html` sample cash memo, English/Urdu toggle (`?lang=ur`).
-- `design/memo/render.mjs` renders `out/memo-<lang>-print.png` (1:1 printer) and `-whatsapp.png` (2x).
-- `design/memo/fonts/` bundled fonts (IBM Plex Sans Condensed, Noto Nastaliq Urdu).
+- `src/app/(tabs)/` Home, New Bill, Khata, Stock, Cash. `src/app/memo/[id].js` memo + share/print. `src/app/party/[id].js` khata statement.
+- `src/db/` schema (rules), actions (writes, each in one transaction), queries (reads), seed (demo shop), DbProvider (`useQuery` re-runs after any write).
+- `src/components/Memo.js` the 58mm memo (384px). `src/components/icons.js` the only place icons are imported from.
+- `src/lib/share.web.js` memo to PNG (html-to-image) and Web Share; `share.js` is the Android stub (view-shot + Bluetooth print come in the paid build).
+- `design/memo/` the approved static memo and its render script.
+
+## Commands
+
+- `npm run web` dev server. `npm run build:web` export to `dist/`. `npm run serve` serve `dist/` with the COOP/COEP headers.
+- `npm run check` (needs `npm run serve` running): screenshots every tab at 360x800 and walks bill, memo, refusal, payment, stock in, cash out. Playwright is not a dependency; symlink the global one: `ln -sfn /opt/node-tools/node_modules/playwright node_modules/playwright`.
+
+## Gotchas
+
+- Web SQLite drops the RAISE text ("Error finalizing statement"); `explain()` re-derives the rule from the figures.
+- Import icons only through `src/components/icons.js`; the package root adds about 2 MB. `EXPO_UNSTABLE_TREE_SHAKING` breaks the SQLite worker, do not use it.
+- From a stack screen, go to a tab with `router.dismissTo(...)`; `navigate`/`replace` stacks a second tabs navigator.
+- A ScrollView inside the bottom sheet needs `flexShrink: 1` or long lists cannot scroll.
+- Vercel must send `Cross-Origin-Embedder-Policy: credentialless` and `Cross-Origin-Opener-Policy: same-origin` (`vercel.json`), or SQLite cannot start.
