@@ -1,10 +1,14 @@
 import { toBlob } from "html-to-image";
+import * as Font from "expo-font";
+import { URDU } from "../theme";
 
 // Web (the demo): the memo View is a DOM node, so html-to-image draws it to PNG.
 // The image is made ahead of the tap, because Android Chrome only lets
 // navigator.share run within a few seconds of the user's tap.
 export async function renderMemo(node, scale) {
   if (!node) return null;
+  // The Urdu font loads after the first screen; the picture must not use a fallback.
+  await Font.loadAsync(URDU).catch(() => {});
   if (document.fonts?.ready) await document.fonts.ready;
   return toBlob(node, { pixelRatio: scale, backgroundColor: "#ffffff", cacheBust: false });
 }

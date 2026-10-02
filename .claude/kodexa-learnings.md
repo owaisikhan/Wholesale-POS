@@ -23,6 +23,7 @@ for the rules.
 | L-005 | 2026-10-01 | gotcha | expo-router: stack screen to tab needs dismissTo, navigate stacks a second tabs navigator | type: mobile-app | logged |
 | L-007 | 2026-10-01 | gap | Every "recent X" list needs a "see all" screen with filters and paging | all | logged |
 | L-009 | 2026-10-02 | choice | Client link previews lead with the client's own branding (his visiting card), product proof beside it | type: mobile-app | logged |
+| L-010 | 2026-10-02 | correction | Web builds need an instant HTML loading screen and small fonts; a white page on slow 4G reads as a crash | all | logged |
 | L-006 | 2026-10-01 | choice | Client demo = web build of the Expo app, in-memory DB, free Vercel link | type: mobile-app | logged |
 
 ## Entries
@@ -97,4 +98,12 @@ for the rules.
 - **Lesson:** For a demo sent to one client, the preview image leads with something he already owns (his visiting card, shop sign, logo) so he sees at a glance it was made for him, with one piece of product proof (the memo) beside it. Keep text to a short label and one line.
 - **Scope:** type: mobile-app (client demos)
 - **Target in skill:** references/types/mobile-app.md, "Client demo" section
+- **Status:** logged
+
+### L-010 · 2026-10-02 · strong · correction
+- **Said / saw:** phone screenshot of a white page at 14 KB/s, then "it was there before, what did you do???", "the crashed the whole site"
+- **Context:** Expo web demo, 1.6 MB compressed before first paint (361 KB JS, 311 KB wasm, ~930 KB TTF fonts), nothing in index.html but an empty #root
+- **Lesson:** Nothing had crashed (live files were byte-identical to the tested build), but to a client a white page is a crash. Every web build ships (1) a plain-HTML loading screen inside index.html with the brand and a "slow internet" line after 6 s, removed when the app mounts, and (2) woff2 subsets for web, never TTF, with non-Latin scripts loaded after first paint. Test with throttled network (CDP emulateNetworkConditions), not only on fast wifi. Prove a "site is broken" report against the live files before changing anything, and say what was found.
+- **Scope:** all
+- **Target in skill:** references/loading-states.md and section 5
 - **Status:** logged

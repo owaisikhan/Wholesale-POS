@@ -31,15 +31,7 @@ export const F = {
   urB: "Urdu-Bold",
 };
 
-export const FONTS = {
-  Sans: require("../assets/fonts/plex-sans-400.ttf"),
-  "Sans-SemiBold": require("../assets/fonts/plex-sans-600.ttf"),
-  "Sans-Bold": require("../assets/fonts/plex-sans-700.ttf"),
-  Cond: require("../assets/fonts/plex-cond-400.ttf"),
-  "Cond-Medium": require("../assets/fonts/plex-cond-500.ttf"),
-  "Cond-Bold": require("../assets/fonts/plex-cond-700.ttf"),
-  Urdu: require("../assets/fonts/nastaliq-400.ttf"),
-  "Urdu-Bold": require("../assets/fonts/nastaliq-700.ttf"),
-};
+export { LATIN, URDU } from "./fonts";
+
 
 export const R = { sm: 8, md: 12, lg: 16 };

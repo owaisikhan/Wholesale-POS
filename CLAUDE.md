@@ -50,5 +50,6 @@ Read `AGENTS.md` and the versioned Expo docs before touching Expo APIs.
 - From a stack screen, go to a tab with `router.dismissTo(...)`; `navigate`/`replace` stacks a second tabs navigator.
 - A ScrollView inside the bottom sheet needs `flexShrink: 1` or long lists cannot scroll.
 - Demo seed puts today's bills between 9 AM and now, none before 10 AM, so a late-night visitor does not see bills at 12:05 AM.
+- Slow phones: `dist/index.html` gets a plain-HTML loading screen (`#boot`, from `scripts/add-meta.mjs`), removed by `BootDone` in `src/app/_layout.js`. Web uses woff2 subsets (`src/fonts.web.js`, `assets/fonts/web/`, made with `pyftsubset`); only Latin fonts block the first screen, Urdu loads after, and `renderMemo` waits for it. Native uses the TTFs in `src/fonts.js`.
 - Link preview image is `assets/og.jpg` (JPEG under 300 KB, or WhatsApp drops it), served with `Cross-Origin-Resource-Policy: cross-origin`. Rebuild it with `node design/og/render.mjs`.
 - Vercel must send `Cross-Origin-Embedder-Policy: credentialless` and `Cross-Origin-Opener-Policy: same-origin` (`vercel.json`), or SQLite cannot start.
