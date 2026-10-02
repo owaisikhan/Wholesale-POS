@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Sohana POS preview</title>
+<style>
+  /* Link preview for WhatsApp / Facebook: 1200x630. Key content kept in the
+     middle 630px square too, because small WhatsApp previews crop to a square. */
+  @font-face { font-family: Plex; font-weight: 400; src: url(../../assets/fonts/plex-sans-400.ttf); }
+  @font-face { font-family: Plex; font-weight: 600; src: url(../../assets/fonts/plex-sans-600.ttf); }
+  @font-face { font-family: Plex; font-weight: 700; src: url(../../assets/fonts/plex-sans-700.ttf); }
+  @font-face { font-family: Urdu; font-weight: 700; src: url(../../assets/fonts/nastaliq-700.ttf); }
+  :root { --navy: #1B2A4A; --turmeric: #E3A21A; --paper: #F5F2EA; }
+  * { margin: 0; box-sizing: border-box; }
+  body { width: 1200px; height: 630px; background: var(--navy); font-family: Plex, sans-serif; color: #fff; overflow: hidden; position: relative; }
+  .left { position: absolute; left: 72px; top: 0; bottom: 0; width: 600px; display: flex; flex-direction: column; justify-content: center; gap: 18px; }
+  .chip { align-self: flex-start; background: var(--turmeric); color: var(--navy); font-weight: 700; font-size: 24px; padding: 8px 18px; border-radius: 10px; }
+  h1 { font-size: 78px; line-height: 1; font-weight: 700; letter-spacing: 1px; }
+  .ur { font-family: Urdu; font-size: 46px; line-height: 1.7; color: #F3D58C; direction: rtl; align-self: flex-start; }
+  ul { list-style: none; padding: 0; display: grid; gap: 10px; font-size: 30px; font-weight: 600; color: #E7EAF1; }
+  li::before { content: ""; display: inline-block; width: 12px; height: 12px; background: var(--turmeric); border-radius: 3px; margin-right: 14px; vertical-align: middle; }
+  .by { font-size: 20px; color: #AEB6C8; }
+  .memo { position: absolute; right: 70px; top: 40px; width: 360px; transform: rotate(3deg); box-shadow: 0 24px 50px rgba(0,0,0,.35); border-radius: 6px; overflow: hidden; height: 640px; background: #fff; }
+  .memo img { width: 100%; display: block; }
+</style>
+</head>
+<body>
+  <div class="left">
+    <div class="chip">Demo app</div>
+    <h1>SOHANA TRADERS</h1>
+    <div class="ur">سوھان ٹریڈرس، سکھر</div>
+    <ul>
+      <li>Bill + 58mm memo, English / اردو</li>
+      <li>Khata, stock alerts, cash in/out</li>
+      <li>Bill on WhatsApp</li>
+    </ul>
+    <div class="by">Software by Kodexa | kodexa.store</div>
+  </div>
+  <div class="memo"><img src="../memo/out/memo-en-whatsapp.png" alt=""></div>
+</body>
+</html>

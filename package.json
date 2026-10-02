@@ -24,7 +24,7 @@
     "start": "expo start",
     "android": "expo start --android",
     "web": "expo start --web",
-    "build:web": "expo export -p web",
+    "build:web": "expo export -p web && node scripts/add-meta.mjs",
     "lint": "expo lint",
     "serve": "node scripts/serve-dist.mjs",
     "check": "node scripts/checks/shots.mjs && node scripts/checks/flow.mjs"
