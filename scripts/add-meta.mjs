@@ -35,12 +35,24 @@ const boot = `
     <style>@keyframes bootspin{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){#boot div{animation:none!important}}</style>
     <script>setTimeout(function(){var s=document.getElementById("boot-slow");if(s)s.style.visibility="visible"},6000)</script>`;
 
+// Preload what the app needs next, so the browser fetches it in parallel with
+// the app code instead of one file after another.
+const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(`${d}/${e.name}`) : [`${d}/${e.name}`]));
+const files = walk("dist").map((f) => f.slice(4));
+const pick = (re) => files.filter((f) => re.test(f));
+const preload = [
+  ...pick(/\/worker-[a-f0-9]+\.js$/).map((f) => `<link rel="preload" href="${f}" as="script" />`),
+  ...pick(/wa-sqlite\.[a-f0-9]+\.wasm$/).map((f) => `<link rel="preload" href="${f}" as="fetch" type="application/wasm" crossorigin />`),
+  ...pick(/fonts\/web\/plex-.*\.woff2$/).map((f) => `<link rel="preload" href="${f}" as="font" type="font/woff2" crossorigin />`),
+].map((l) => `\n    ${l}`).join("");
+
 const file = "dist/index.html";
 let html = fs.readFileSync(file, "utf8");
 if (!html.includes('property="og:image"')) {
   html = html.replace("</title>", `</title>${tags}`);
 }
 if (!html.includes('id="boot"')) html = html.replace("<body>", `<body>${boot}`);
+if (!html.includes('rel="preload"')) html = html.replace("</title>", `</title>${preload}`);
 fs.writeFileSync(file, html);
 fs.copyFileSync("assets/og.jpg", "dist/og.jpg");
 console.log("link preview tags and loading screen added");

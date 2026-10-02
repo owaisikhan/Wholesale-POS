@@ -10,6 +10,20 @@ export const DEMO = Platform.OS === "web";
 
 const DbContext = createContext(null);
 
+async function openDb() {
+  const conn = await SQLite.openDatabaseAsync(DEMO ? ":memory:" : "sohana.db");
+  await conn.execAsync(SCHEMA);
+  const has = await conn.getFirstAsync("SELECT COUNT(*) AS n FROM items");
+  if (!has.n) await seed(conn);
+  return conn;
+}
+
+// Web: start opening the database the moment the app code runs, in parallel
+// with the fonts, instead of after them. On a far-away server each step in a
+// row costs seconds.
+let early = DEMO ? openDb() : null;
+early?.catch(() => {});
+
 export function DbProvider({ children, fallback = null }) {
   const [db, setDb] = useState(null);
   const [error, setError] = useState(null);
@@ -17,18 +31,12 @@ export function DbProvider({ children, fallback = null }) {
 
   useEffect(() => {
     let alive = true;
-    (async () => {
-      try {
-        const conn = await SQLite.openDatabaseAsync(DEMO ? ":memory:" : "sohana.db");
-        await conn.execAsync(SCHEMA);
-        const has = await conn.getFirstAsync("SELECT COUNT(*) AS n FROM items");
-        if (!has.n) await seed(conn);
-        if (alive) setDb(conn);
-      } catch (e) {
-        console.warn(e);
-        if (alive) setError(e);
-      }
-    })();
+    const p = early || openDb();
+    early = null;
+    p.then((conn) => alive && setDb(conn)).catch((e) => {
+      console.warn(e);
+      if (alive) setError(e);
+    });
     return () => { alive = false; };
   }, []);
 
