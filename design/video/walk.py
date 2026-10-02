@@ -21,11 +21,7 @@ endfiles = sorted(glob.glob(os.path.join(here, "frames", "endcard", "*.jpg")))
 # real-phone WhatsApp clip (waclip.py): blurred, sped up, ripples drawn in
 wafiles = sorted(glob.glob(os.path.join(here, "frames", "wa", "*.jpg")))
 watap = json.load(open(os.path.join(here, "frames", "wa", "taps.json"))) if wafiles else []
-WACAPS = [
-    {"at": 0.0, "ur": "Ab asli phone par: khata WhatsApp par", "en": "On a real phone: send the khata on WhatsApp", "chapter": "BONUS  REAL PHONE"},
-    {"at": 3.4, "ur": "Customer chunein aur bhej dein", "en": "Pick the customer and send", "chapter": "BONUS  REAL PHONE"},
-    {"at": 6.9, "ur": "Khata seedha customer ke WhatsApp par", "en": "The khata reaches the customer on WhatsApp", "chapter": "BONUS  REAL PHONE"},
-]
+WACAPS = json.load(open(os.path.join(here, "frames", "wa", "captions.json"))) if wafiles else []
 INTRO = int(3.6 * FPS)
 XF = 8  # caption cross-fade frames
 
@@ -78,7 +74,8 @@ def demo_frame(i):
         fr.paste(lay, (0, 0), lay)
     return fr
 
-WX, WW, WH = (W - 640) // 2, 640, 1440
+WW, WH = Image.open(wafiles[0]).size if wafiles else (640, 1440)
+WX = (W - WW) // 2
 wabase = Image.new("RGB", (W, H), NAVY)
 ImageDraw.Draw(wabase).rounded_rectangle((WX - 14, SY - 14, WX + WW + 14, SY + WH + 60), 58, fill="#0B1220")
 wamask = Image.new("L", (WW, WH), 0); ImageDraw.Draw(wamask).rounded_rectangle((0, 0, WW, WH), 40, fill=255)
