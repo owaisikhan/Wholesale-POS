@@ -1,17 +1,18 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
-import * as SQLite from "expo-sqlite";
+import { openConnection } from "./open";
 import { SCHEMA } from "./schema";
 import { seed } from "./seed";
 
-// The web build is the client demo: an in-memory database, seeded with sample
-// data, gone on refresh. The Android build keeps a real file on the phone.
+// The web build is the client demo: an in-memory database per tab (sql.js, see
+// open.web.js), seeded with sample data, gone on refresh. The Android build
+// keeps a real file on the phone (expo-sqlite, see open.js).
 export const DEMO = Platform.OS === "web";
 
 const DbContext = createContext(null);
 
 async function openDb() {
-  const conn = await SQLite.openDatabaseAsync(DEMO ? ":memory:" : "sohana.db");
+  const conn = await openConnection();
   await conn.execAsync(SCHEMA);
   const has = await conn.getFirstAsync("SELECT COUNT(*) AS n FROM items");
   if (!has.n) await seed(conn);

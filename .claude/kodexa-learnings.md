@@ -24,6 +24,7 @@ for the rules.
 | L-007 | 2026-10-01 | gap | Every "recent X" list needs a "see all" screen with filters and paging | all | logged |
 | L-009 | 2026-10-02 | choice | Client link previews lead with the client's own branding (his visiting card), product proof beside it | type: mobile-app | logged |
 | L-010 | 2026-10-02 | correction | Web builds need an instant HTML loading screen and small fonts; a white page on slow 4G reads as a crash | all | logged |
+| L-011 | 2026-10-02 | gotcha | expo-sqlite web holds an OPFS lock per origin: second tab hangs; use sql.js for web demos | type: mobile-app | logged |
 | L-006 | 2026-10-01 | choice | Client demo = web build of the Expo app, in-memory DB, free Vercel link | type: mobile-app | logged |
 
 ## Entries
@@ -50,7 +51,7 @@ for the rules.
 - **Lesson:** On web the RAISE text does not reach JavaScript. Keep the rule in the trigger, and when no code arrives, re-check the figures (stock, walk-in) to choose the sentence. Never show the raw error.
 - **Scope:** type: mobile-app
 - **Target in skill:** references/types/mobile-app.md, Gotchas
-- **Status:** logged
+- **Status:** superseded by L-011
 
 ### L-004 · 2026-10-01 · medium · gotcha
 - **Said / saw:** web bundle 3.5 MB; with EXPO_UNSTABLE_TREE_SHAKING 1.4 MB but "importScripts ... /worker failed to load"
@@ -106,4 +107,12 @@ for the rules.
 - **Lesson:** Nothing had crashed (live files were byte-identical to the tested build), but to a client a white page is a crash. Every web build ships (1) a plain-HTML loading screen inside index.html with the brand and a "slow internet" line after 6 s, removed when the app mounts, and (2) woff2 subsets for web, never TTF, with non-Latin scripts loaded after first paint. Test with throttled network (CDP emulateNetworkConditions), not only on fast wifi. Prove a "site is broken" report against the live files before changing anything, and say what was found.
 - **Scope:** all
 - **Target in skill:** references/loading-states.md and section 5
+- **Status:** logged
+
+### L-011 · 2026-10-02 · strong · gotcha
+- **Said / saw:** "the problem was that if one tab is already open, the other new tab keeps on loading"
+- **Context:** expo-sqlite 57 web, even with ":memory:": its worker always creates an AccessHandlePoolVFS on OPFS. Tab 2 fails with NoModificationAllowedError (createSyncAccessHandle) and never leaves the splash.
+- **Lesson:** For a browser demo of an Expo + SQLite app, use sql.js on web behind a small adapter with the same calls (execAsync, runAsync, getFirstAsync, getAllAsync, withTransactionAsync), keep expo-sqlite for native via platform files (open.js / open.web.js). It also drops the worker, the COOP/COEP headers and keeps RAISE messages. Always test a web build with two tabs open; my checks used one tab each and missed it for a day.
+- **Scope:** type: mobile-app
+- **Target in skill:** references/types/mobile-app.md, Stack and "Client demo"
 - **Status:** logged

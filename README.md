@@ -9,7 +9,7 @@ The web build is the client demo: same app, sample data in the browser, resets o
 npm install
 npm run web          # develop
 npm run build:web    # export to dist/
-npm run serve        # serve dist/ with the headers SQLite needs
+npm run serve        # serve dist/ locally
 ```
 
 See `CLAUDE.md` for the rules, layout and gotchas.

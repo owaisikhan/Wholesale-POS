@@ -18,7 +18,8 @@
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
     "react-native-svg": "15.15.4",
-    "react-native-web": "^0.21.2"
+    "react-native-web": "^0.21.2",
+    "sql.js": "^1.14.2"
   },
   "scripts": {
     "start": "expo start",
@@ -27,7 +28,7 @@
     "build:web": "expo export -p web && node scripts/add-meta.mjs",
     "lint": "expo lint",
     "serve": "node scripts/serve-dist.mjs",
-    "check": "node scripts/checks/shots.mjs && node scripts/checks/flow.mjs"
+    "check": "node scripts/checks/shots.mjs && node scripts/checks/flow.mjs && node scripts/checks/tabs.mjs"
   },
   "private": true
 }

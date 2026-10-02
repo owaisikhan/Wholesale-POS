@@ -41,8 +41,8 @@ const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e
 const files = walk("dist").map((f) => f.slice(4));
 const pick = (re) => files.filter((f) => re.test(f));
 const preload = [
-  ...pick(/\/worker-[a-f0-9]+\.js$/).map((f) => `<link rel="preload" href="${f}" as="script" />`),
-  ...pick(/wa-sqlite\.[a-f0-9]+\.wasm$/).map((f) => `<link rel="preload" href="${f}" as="fetch" type="application/wasm" crossorigin />`),
+  `<link rel="preload" href="/sql-wasm.js" as="script" />`,
+  `<link rel="preload" href="/sql-wasm.wasm" as="fetch" type="application/wasm" crossorigin />`,
   ...pick(/fonts\/web\/plex-.*\.woff2$/).map((f) => `<link rel="preload" href="${f}" as="font" type="font/woff2" crossorigin />`),
 ].map((l) => `\n    ${l}`).join("");
 

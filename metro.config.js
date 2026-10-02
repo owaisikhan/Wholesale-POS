@@ -2,8 +2,8 @@ const { getDefaultConfig } = require("expo/metro-config");
 
 const config = getDefaultConfig(__dirname);
 
-// expo-sqlite on web runs SQLite as wasm and needs SharedArrayBuffer,
-// which browsers only allow on cross-origin isolated pages.
+// expo-sqlite is native-only here (the web demo uses sql.js from public/), but
+// keep wasm resolvable and the dev server isolated in case it is imported.
 config.resolver.assetExts.push("wasm");
 // Small web font subsets (src/fonts.web.js).
 config.resolver.assetExts.push("woff2");

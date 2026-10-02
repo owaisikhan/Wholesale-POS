@@ -21,13 +21,13 @@ design work, and log preferences, corrections and reversals to
 - WhatsApp: one-tap share of the memo image (free), not the paid Business API.
 - Demo is shown as a web page, not an APK.
 
-- Demo = the web build of the same Expo app, on a free Vercel link. In-memory SQLite, seeded with sample data, resets on refresh; memos say DEMO; WhatsApp never prefills a stored number in the demo.
+- Demo = the web build of the same Expo app, on a free Vercel link. In-memory SQLite per tab (sql.js on web, `src/db/open.web.js`; expo-sqlite on Android, `src/db/open.js`), seeded with sample data, resets on refresh; memos say DEMO; WhatsApp never prefills a stored number in the demo.
 - Money and stock rules are SQLite triggers (`src/db/schema.js`): no negative stock, append-only ledger/cash/bills, bill "previous" must equal the khata balance, walk-in pays in full. `src/lib/refusals.js` turns them into sentences with figures.
 - Khata sign: balance = SUM(debit - credit). Customer positive = he owes us. Supplier negative = we owe him.
 
 ## Stack
 
-Expo SDK 57 (React Native 0.86, React 19), expo-router (routes in `src/app/`), expo-sqlite (wasm on web), plain JavaScript.
+Expo SDK 57 (React Native 0.86, React 19), expo-router (routes in `src/app/`), expo-sqlite on Android, sql.js on web (`public/sql-wasm.js` + `.wasm`, loaded at runtime), plain JavaScript.
 Read `AGENTS.md` and the versioned Expo docs before touching Expo APIs.
 
 ## Layout
@@ -40,16 +40,17 @@ Read `AGENTS.md` and the versioned Expo docs before touching Expo APIs.
 
 ## Commands
 
-- `npm run web` dev server. `npm run build:web` export to `dist/`. `npm run serve` serve `dist/` with the COOP/COEP headers.
-- `npm run check` (needs `npm run serve` running): screenshots every tab at 360x800 and walks bill, memo, refusal, payment, stock in, cash out, all bills. Playwright is not a dependency; symlink the global one: `ln -sfn /opt/node-tools/node_modules/playwright node_modules/playwright`.
+- `npm run web` dev server. `npm run build:web` export to `dist/`. `npm run serve` serve `dist/` with SPA fallback.
+- `npm run check` (needs `npm run serve` running): screenshots every tab at 360x800 and walks bill, memo, refusal, payment, stock in, cash out, all bills; opens 3 tabs at once. Playwright is not a dependency; symlink the global one: `ln -sfn /opt/node-tools/node_modules/playwright node_modules/playwright`.
 
 ## Gotchas
 
-- Web SQLite drops the RAISE text ("Error finalizing statement"); `explain()` re-derives the rule from the figures.
-- Import icons only through `src/components/icons.js`; the package root adds about 2 MB. `EXPO_UNSTABLE_TREE_SHAKING` breaks the SQLite worker, do not use it.
+- Never use expo-sqlite on web: its worker always opens an OPFS access-handle pool that one tab holds, so every other tab hangs on "Opening your shop" (NoModificationAllowedError). `scripts/checks/tabs.mjs` guards this. `explain()` still re-derives refusals from the figures if a trigger's code is missing.
+- Import icons only through `src/components/icons.js`; the package root adds about 2 MB.
 - From a stack screen, go to a tab with `router.dismissTo(...)`; `navigate`/`replace` stacks a second tabs navigator.
 - A ScrollView inside the bottom sheet needs `flexShrink: 1` or long lists cannot scroll.
 - Demo seed puts today's bills between 9 AM and now, none before 10 AM, so a late-night visitor does not see bills at 12:05 AM.
 - Slow phones: `dist/index.html` gets a plain-HTML loading screen (`#boot`, from `scripts/add-meta.mjs`), removed by `BootDone` in `src/app/_layout.js`. Web uses woff2 subsets (`src/fonts.web.js`, `assets/fonts/web/`, made with `pyftsubset`); only Latin fonts block the first screen, Urdu loads after, and `renderMemo` waits for it. Native uses the TTFs in `src/fonts.js`.
 - Link preview image is `assets/og.jpg` (JPEG under 300 KB, or WhatsApp drops it), served with `Cross-Origin-Resource-Policy: cross-origin`. Rebuild it with `node design/og/render.mjs`.
-- Vercel must send `Cross-Origin-Embedder-Policy: credentialless` and `Cross-Origin-Opener-Policy: same-origin` (`vercel.json`), or SQLite cannot start.
+- sql.js is loaded from `public/` with a script tag, not bundled: its build requires Node's `fs`. Upgrading sql.js means copying both files from `node_modules/sql.js/dist/` again.
+- Hashed files under `/_expo/static` and `/assets` are served immutable for a year (`vercel.json`).
