@@ -12,3 +12,10 @@ Uses the kodexa-reels skill workspace (`setup.sh`, `render.js`, `music.py`, `she
 
 `steps.js` is the script: one `cap()` per caption (Roman Urdu, English, chapter), then the taps.
 If a screen changes, edit the step and re-record; `apprec.js` stops if a tap target is off screen.
+
+## Real-phone WhatsApp clip (bonus, before the end card)
+
+`waclip.py` cuts the owner's own screen recording (`wa-raw.mp4` in the workspace, never committed:
+it shows private chats) into an 11 s clip: trims the app switch and the notification, speeds up waits,
+blurs every contact name, number and photo (`blur_boxes`), and draws a gold ripple at each tap
+(`TAPS`, found from frame differences). `walk.py` adds it after the demo frames when `frames/wa/` exists.

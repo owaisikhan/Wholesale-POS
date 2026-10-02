@@ -18,6 +18,14 @@ files = sorted(glob.glob(os.path.join(d, "*.jpg")))
 caps = json.load(open(os.path.join(d, "captions.json")))
 taps = json.load(open(os.path.join(d, "taps.json")))
 endfiles = sorted(glob.glob(os.path.join(here, "frames", "endcard", "*.jpg")))
+# real-phone WhatsApp clip (waclip.py): blurred, sped up, ripples drawn in
+wafiles = sorted(glob.glob(os.path.join(here, "frames", "wa", "*.jpg")))
+watap = json.load(open(os.path.join(here, "frames", "wa", "taps.json"))) if wafiles else []
+WACAPS = [
+    {"at": 0.0, "ur": "Ab asli phone par: khata WhatsApp par", "en": "On a real phone: send the khata on WhatsApp", "chapter": "BONUS  REAL PHONE"},
+    {"at": 3.4, "ur": "Customer chunein aur bhej dein", "en": "Pick the customer and send", "chapter": "BONUS  REAL PHONE"},
+    {"at": 6.9, "ur": "Khata seedha customer ke WhatsApp par", "en": "The khata reaches the customer on WhatsApp", "chapter": "BONUS  REAL PHONE"},
+]
 INTRO = int(3.6 * FPS)
 XF = 8  # caption cross-fade frames
 
@@ -68,6 +76,27 @@ def demo_frame(i):
         if a < 1:
             lay = lay.copy(); lay.putalpha(lay.split()[3].point(lambda v: int(v * a)))
         fr.paste(lay, (0, 0), lay)
+    return fr
+
+WX, WW, WH = (W - 640) // 2, 640, 1440
+wabase = Image.new("RGB", (W, H), NAVY)
+ImageDraw.Draw(wabase).rounded_rectangle((WX - 14, SY - 14, WX + WW + 14, SY + WH + 60), 58, fill="#0B1220")
+wamask = Image.new("L", (WW, WH), 0); ImageDraw.Draw(wamask).rounded_rectangle((0, 0, WW, WH), 40, fill=255)
+walayers = [caption_layer(c) for c in WACAPS]
+wastarts = [int(round(c["at"] * FPS)) for c in WACAPS]
+
+def wa_frame(i):
+    fr = wabase.copy()
+    pg = Image.open(wafiles[i]).convert("RGB")
+    if pg.size != (WW, WH): pg = pg.resize((WW, WH), Image.LANCZOS)
+    fr.paste(pg, (WX, SY), wamask)
+    k = max([j for j, st in enumerate(wastarts) if st <= i], default=0)
+    a = min(1, (i - wastarts[k] + 1) / XF)
+    if a < 1 and k > 0:
+        old = walayers[k - 1].copy(); old.putalpha(old.split()[3].point(lambda v: int(v * (1 - a)))); fr.paste(old, (0, 0), old)
+    lay = walayers[k]
+    if a < 1: lay = lay.copy(); lay.putalpha(lay.split()[3].point(lambda v: int(v * a)))
+    fr.paste(lay, (0, 0), lay)
     return fr
 
 # ---- intro: his visiting card + title ----
@@ -122,6 +151,11 @@ for i in range(len(files)):
     fr = demo_frame(i)
     if i < 10: fr = Image.blend(introlast, fr, (i + 1) / 10)
     put(fr); last = fr
+demolast = last
+for i in range(len(wafiles)):
+    fr = wa_frame(i)
+    if i < 10: fr = Image.blend(demolast, fr, (i + 1) / 10)
+    put(fr); last = fr
 for j, f in enumerate(endfiles):
     ef = Image.open(f).convert("RGB")
     if ef.size != (W, H): ef = ef.resize((W, H), Image.LANCZOS)
@@ -130,7 +164,8 @@ for j, f in enumerate(endfiles):
 for pk in vs.encode(): o.mux(pk)
 
 # ---- audio: lofi bed + a tap on every tap, then the end-card chime ----
-body = int((INTRO + len(files)) / FPS * SR)
+body = int((INTRO + len(files) + len(wafiles)) / FPS * SR)
+taps = list(taps) + [t + (len(files)) / FPS for t in watap]
 fx = np.zeros((2, body), np.float32)
 for t in taps:
     snd = music.fx("tap", SR); a = int((t + INTRO / FPS) * SR); b = min(body, a + len(snd))
