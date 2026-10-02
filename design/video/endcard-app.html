@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kodexa end card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap">
+<style>
+:root{--bg:#f4f2ea;--surface:#fffefa;--ink:#1c1b19;--muted:#56534c;--gold:#e0b64a;--wa:#1f9d55;--line:#ccc7ba}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;display:flex;flex-direction:column;justify-content:center;gap:26px;padding:0 30px;overflow:hidden;
+  background-image:linear-gradient(rgba(28,27,25,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(28,27,25,.045) 1px,transparent 1px);background-size:36px 36px}
+.in{opacity:0;animation:rise .7s cubic-bezier(.2,.9,.3,1) forwards}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+.brand{display:flex;align-items:center;gap:14px}
+.tile{width:62px;height:62px;border-radius:16px;background:var(--gold);display:grid;place-items:center;font:800 34px "Bricolage Grotesque",sans-serif;box-shadow:0 4px 0 var(--ink)}
+.word{font:800 38px "Bricolage Grotesque",sans-serif;letter-spacing:-.02em}
+.eyebrow{font:500 12px "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:-14px}
+h1{font:800 44px/1.02 "Bricolage Grotesque",sans-serif;letter-spacing:-.025em;margin:0}
+h1 span{background:var(--gold);padding:0 6px;border-radius:6px}
+.sub{font-size:18px;line-height:1.45;color:var(--muted);margin:-8px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:500 14px "DM Sans",sans-serif;padding:8px 13px;border:1.5px solid var(--ink);border-radius:999px;background:var(--surface)}
+.chip.hot{background:var(--ink);color:var(--surface)}
+.cta{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.wa{display:flex;align-items:center;gap:14px;background:var(--wa);color:#fff;border-radius:18px;padding:15px 18px;box-shadow:0 4px 0 var(--ink)}
+.wa svg{flex:none}
+.wa .t small{display:block;font:500 12px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.wa .t b{font:800 28px "Bricolage Grotesque",sans-serif;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.site{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1.5px solid var(--ink);border-radius:18px;padding:14px 18px;background:var(--surface)}
+.site b{font:800 26px "Bricolage Grotesque",sans-serif}
+.site span{font:500 12px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="brand in" style="animation-delay:.05s"><div class="tile">K</div><div class="word">Kodexa</div></div>
+  <div class="eyebrow in" style="animation-delay:.2s">this website was built by</div>
+  <h1 class="in" style="animation-delay:.25s">Created by <span>Kodexa.</span></h1>
+  <p class="sub in" style="animation-delay:.45s">We build the software your business runs on, and fun websites like this one.</p>
+  <div class="chips in" style="animation-delay:.65s">
+    <span class="chip hot">Interactive websites</span><span class="chip">Online stores</span><span class="chip">Business dashboards</span>
+    <span class="chip">Android apps</span><span class="chip">Desktop software</span><span class="chip">AI chatbots</span>
+  </div>
+  <div class="cta">
+    <div class="wa in" style="animation-delay:.9s">
+      <svg width="46" height="46" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4C12.95 4 4 12.6 4 23.2c0 3.7 1.1 7.2 3.1 10.1L5 43l10-2.9c2.7 1.4 5.8 2.2 9 2.2 11.05 0 20-8.6 20-19.1S35.05 4 24 4z" fill="#fff"/><path d="M18.3 14.5c-.5-1.1-1-1.1-1.5-1.1h-1.3c-.4 0-1.2.2-1.8.8-.6.7-2.3 2.2-2.3 5.4s2.4 6.3 2.7 6.7c.3.4 4.6 7.2 11.3 9.8 5.6 2.2 6.7 1.8 7.9 1.7 1.2-.1 3.9-1.6 4.5-3.1.6-1.5.6-2.8.4-3.1-.2-.3-.6-.4-1.3-.8l-4.2-2c-.6-.2-1-.3-1.4.3-.4.6-1.6 2-2 2.4-.4.4-.7.5-1.3.2-.6-.3-2.6-1-5-3.1-1.8-1.6-3.1-3.6-3.4-4.2-.4-.6 0-1 .3-1.3l.9-1.1c.3-.4.4-.6.6-1 .2-.4.1-.8 0-1.1l-1.9-4.5z" fill="#1f9d55"/></svg>
+      <div class="t"><small>WhatsApp us</small><b>+92 339 0391420</b></div>
+    </div>
+    <div class="site in" style="animation-delay:1.1s"><b>www.kodexa.store</b><span>get a quote</span></div>
+  </div>
+<script>
+// per-reel options: ?line=<subline>&hot=ai|store|dash|desk|web&eyebrow=<small caption>
+(() => {
+  const q = new URLSearchParams(location.search);
+  if (q.get('line')) document.querySelector('.sub').textContent = q.get('line');
+  if (q.get('eyebrow')) document.querySelector('.eyebrow').textContent = q.get('eyebrow');
+  const map = { ai: 'AI chatbots', store: 'Online stores', dash: 'Business dashboards', desk: 'Desktop software', android: 'Android apps', web: 'Interactive websites' };
+  if (q.get('hot') && map[q.get('hot')]) document.querySelectorAll('.chip').forEach(c => c.classList.toggle('hot', c.textContent === map[q.get('hot')]));
+})();
+// a short three-note chime as the card lands
+addEventListener('load', () => setTimeout(() => {
+  let ac; try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
+  const t0 = ac.currentTime + .02;
+  [[659.3, 0], [784, .12], [1046.5, .26]].forEach(([f, d]) => {
+    const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = f;
+    g.gain.setValueAtTime(.0001, t0 + d); g.gain.exponentialRampToValueAtTime(.25, t0 + d + .01); g.gain.exponentialRampToValueAtTime(.0001, t0 + d + 1.1);
+    o.connect(g).connect(ac.destination); o.start(t0 + d); o.stop(t0 + d + 1.2);
+  });
+}, 150));
+</script>
+</body>
+</html>
