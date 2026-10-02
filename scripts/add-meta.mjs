@@ -14,7 +14,9 @@ const tags = `
     <meta property="og:title" content="${title}" />
     <meta property="og:description" content="${desc}" />
     <meta property="og:url" content="${SITE}/" />
-    <meta property="og:image" content="${SITE}/og.png" />
+    <meta property="og:image" content="${SITE}/og.jpg" />
+    <meta property="og:image:secure_url" content="${SITE}/og.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Sohana Traders visiting card and a sample 58mm cash memo" />
@@ -26,5 +28,5 @@ if (!html.includes('property="og:image"')) {
   html = html.replace("</title>", `</title>${tags}`);
   fs.writeFileSync(file, html);
 }
-fs.copyFileSync("assets/og.png", "dist/og.png");
+fs.copyFileSync("assets/og.jpg", "dist/og.jpg");
 console.log("link preview tags added");
