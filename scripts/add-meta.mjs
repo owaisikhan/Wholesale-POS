@@ -17,7 +17,7 @@ const tags = `
     <meta property="og:image" content="${SITE}/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Sohana Traders app with a sample 58mm cash memo" />
+    <meta property="og:image:alt" content="Sohana Traders visiting card and a sample 58mm cash memo" />
     <meta name="twitter:card" content="summary_large_image" />`;
 
 const file = "dist/index.html";

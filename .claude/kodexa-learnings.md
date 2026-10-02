@@ -22,6 +22,7 @@ for the rules.
 | L-004 | 2026-10-01 | gotcha | lucide-react-native root import adds ~2 MB on web; Expo tree shaking breaks the SQLite worker | type: mobile-app | logged |
 | L-005 | 2026-10-01 | gotcha | expo-router: stack screen to tab needs dismissTo, navigate stacks a second tabs navigator | type: mobile-app | logged |
 | L-007 | 2026-10-01 | gap | Every "recent X" list needs a "see all" screen with filters and paging | all | logged |
+| L-009 | 2026-10-02 | choice | Client link previews lead with the client's own branding (his visiting card), product proof beside it | type: mobile-app | logged |
 | L-006 | 2026-10-01 | choice | Client demo = web build of the Expo app, in-memory DB, free Vercel link | type: mobile-app | logged |
 
 ## Entries
@@ -88,4 +89,12 @@ for the rules.
 - **Lesson:** Seeded "today" activity must sit inside business hours and before now; when the day has not started yet, seed none.
 - **Scope:** all
 - **Target in skill:** section 5, realistic data
+- **Status:** logged
+
+### L-009 · 2026-10-02 · strong · choice
+- **Said / saw:** "this is the picture of card, would it be nicer to add this picture instad of memo"; offered A (text + memo) and B (his visiting card + memo); "ok merge B with main"
+- **Context:** WhatsApp link preview (og:image) for a client demo
+- **Lesson:** For a demo sent to one client, the preview image leads with something he already owns (his visiting card, shop sign, logo) so he sees at a glance it was made for him, with one piece of product proof (the memo) beside it. Keep text to a short label and one line.
+- **Scope:** type: mobile-app (client demos)
+- **Target in skill:** references/types/mobile-app.md, "Client demo" section
 - **Status:** logged
